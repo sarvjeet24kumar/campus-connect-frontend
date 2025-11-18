@@ -1,35 +1,49 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
-import './App.css';
+import { Navigate, Route, Routes } from "react-router-dom";
 
-import './App.css';
+import SiteHeader from "./components/SiteHeader.jsx";
+import SiteFooter from "./components/SiteFooter.jsx";
 
-function App() {
+import HomePage from "./pages/HomePage.jsx";
+import StudentDashboard from "./pages/StudentDashboard.jsx";
+import AdminDashboard from "./pages/AdminDashboard.jsx";
+import { AdminRoute, PublicRoute, StudentRoute } from "./routes/ProtectedRoute.jsx";
+
+const App = () => {
   return (
-    <div className="app-container">
-      <header className="header">
-        <h1>
-          Welcome to <span className="highlight">Campus Connect</span>
-        </h1>
-        <p>Your gateway to events, clubs, and campus activities</p>
-      </header>
-
-      <main className="main-content">
-        <p>
-          Explore upcoming events, register easily, and stay connected with your
-          campus community.
-        </p>
-        <button className="get-started-btn">Get Started</button>
+    <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col">
+      <SiteHeader />
+      <main className="flex-1 mx-auto max-w-6xl w-full px-4 py-6">
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <PublicRoute restricted>
+                <HomePage />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/student"
+            element={
+              <StudentRoute>
+                <StudentDashboard />
+              </StudentRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </main>
-
-      <footer className="footer">
-        <p>
-          © {new Date().getFullYear()} Campus Connect | All Rights Reserved
-        </p>
-      </footer>
+      <SiteFooter />
     </div>
   );
-}
+};
 
 export default App;
