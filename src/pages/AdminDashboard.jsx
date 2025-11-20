@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 import {
   createEvent,
@@ -7,23 +7,22 @@ import {
   getEvents,
   softDeleteEvent,
   updateEvent,
-} from "../api/events.api.js";
-import Alert from "../components/Alert.jsx";
-import EventCard from "../components/EventCard.jsx";
-import { useAuth } from "../context/AuthContext.jsx";
+} from '../api/events.api.js';
+import Alert from '../components/Alert.jsx';
+import EventCard from '../components/EventCard.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 
 const blankForm = {
   id: null,
-  title: "",
-  description: "",
-  start_time: "",
-  end_time: "",
-  location: "",
+  title: '',
+  description: '',
+  start_time: '',
+  end_time: '',
+  location: '',
   seats: 10,
 };
 
-
-const utcToLocalDateTime = (utcIsoString) => {
+const utcToLocalDateTime = utcIsoString => {
   const date = new Date(utcIsoString);
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -35,6 +34,7 @@ const utcToLocalDateTime = (utcIsoString) => {
 
 const AdminDashboard = () => {
   const { user, isSuperAdmin } = useAuth();
+  console.log('Is Super Admin:', isSuperAdmin, user);
 
   const [events, setEvents] = useState([]);
   const [locations, setLocations] = useState([]);
@@ -46,8 +46,9 @@ const AdminDashboard = () => {
   const [registrationsByEvent, setRegistrationsByEvent] = useState({});
   const [expandedEvent, setExpandedEvent] = useState(null);
 
-  
-  const myEvents = events.filter((event) => event.created_by === user?.id);
+  const myEvents = events.filter(event => event.created_by === user?.id);
+
+  // console.log('My Events:', myEvents, events, user);
 
   const resetForm = () => {
     setForm(blankForm);
@@ -64,7 +65,7 @@ const AdminDashboard = () => {
       setLocations(locationsData);
     } catch (err) {
       console.error(err);
-      setError("Unable to load event data.");
+      setError('Unable to load event data.');
     } finally {
       setLoading(false);
     }
@@ -74,12 +75,12 @@ const AdminDashboard = () => {
     fetchData();
   }, []);
 
-  const handleChange = (event) => {
+  const handleChange = event => {
     const { name, value } = event.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm(prev => ({ ...prev, [name]: value }));
   };
 
-  const submitForm = async (event) => {
+  const submitForm = async event => {
     event.preventDefault();
     setError(null);
     setMessage(null);
@@ -97,17 +98,17 @@ const AdminDashboard = () => {
     try {
       if (form.id) {
         await updateEvent(form.id, payload);
-        setMessage("Event updated successfully.");
+        setMessage('Event updated successfully.');
       } else {
         await createEvent(payload);
-        setMessage("Event created successfully.");
+        setMessage('Event created successfully.');
       }
       resetForm();
       await fetchData();
     } catch (err) {
       if (!err.response) {
         setError(
-          "Cannot connect to server. Please make sure Django server is running."
+          'Cannot connect to server. Please make sure Django server is running.'
         );
         setProcessing(false);
         return;
@@ -116,20 +117,20 @@ const AdminDashboard = () => {
       const detail = err.response?.data;
       if (Array.isArray(detail)) {
         setError(detail[0]);
-      } else if (detail && typeof detail === "object") {
+      } else if (detail && typeof detail === 'object') {
         const firstError = Object.values(detail).flat()[0];
-        setError(firstError || "Unable to save event.");
-      } else if (typeof detail === "string") {
+        setError(firstError || 'Unable to save event.');
+      } else if (typeof detail === 'string') {
         setError(detail);
       } else {
-        setError("Unable to save event. Please check inputs.");
+        setError('Unable to save event. Please check inputs.');
       }
     } finally {
       setProcessing(false);
     }
   };
 
-  const editEvent = (eventData) => {
+  const editEvent = eventData => {
     setForm({
       id: eventData.id,
       title: eventData.title,
@@ -141,10 +142,10 @@ const AdminDashboard = () => {
     });
   };
 
-  const deleteEvent = async (eventId) => {
+  const deleteEvent = async eventId => {
     if (
       !window.confirm(
-        "Are you sure you want to delete this event? All registrations will be removed."
+        'Are you sure you want to delete this event? All registrations will be removed.'
       )
     ) {
       return;
@@ -154,29 +155,29 @@ const AdminDashboard = () => {
     setMessage(null);
     try {
       await softDeleteEvent(eventId);
-      setMessage("Event removed.");
+      setMessage('Event removed.');
       await fetchData();
     } catch (err) {
       if (!err.response) {
         setError(
-          "Cannot connect to server. Please make sure Django server is running."
+          'Cannot connect to server. Please make sure Django server is running.'
         );
         return;
       }
 
       const detail = err.response?.data?.error;
-      setError(detail || "Unable to delete this event.");
+      setError(detail || 'Unable to delete this event.');
     }
   };
 
-  const toggleRegistrations = async (eventId) => {
+  const toggleRegistrations = async eventId => {
     if (expandedEvent === eventId) {
       setExpandedEvent(null);
       return;
     }
     try {
       const data = await getEventRegistrations(eventId);
-      setRegistrationsByEvent((prev) => ({
+      setRegistrationsByEvent(prev => ({
         ...prev,
         [eventId]: data,
       }));
@@ -184,13 +185,13 @@ const AdminDashboard = () => {
     } catch (err) {
       if (!err.response) {
         setError(
-          "Cannot connect to server. Please make sure Django server is running."
+          'Cannot connect to server. Please make sure Django server is running.'
         );
         return;
       }
 
       const detail = err.response?.data?.error;
-      setError(detail || "Unable to load registrations.");
+      setError(detail || 'Unable to load registrations.');
     }
   };
 
@@ -228,12 +229,12 @@ const AdminDashboard = () => {
       <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold text-slate-800">
-            {form.id ? "Edit Event" : "Create Event"}
+            {form.id ? 'Edit Event' : 'Create Event'}
           </h2>
         </div>
         <form onSubmit={submitForm} className="mt-4 grid gap-4 md:grid-cols-2">
           <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Title
+            Title *
             <input
               required
               name="title"
@@ -243,7 +244,7 @@ const AdminDashboard = () => {
             />
           </label>
           <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Seats
+            Seats *
             <input
               required
               type="number"
@@ -255,7 +256,7 @@ const AdminDashboard = () => {
             />
           </label>
           <label className="md:col-span-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Description
+            Description *
             <textarea
               required
               name="description"
@@ -266,7 +267,7 @@ const AdminDashboard = () => {
             />
           </label>
           <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Start Time
+            Start Time *
             <input
               required
               type="datetime-local"
@@ -277,7 +278,7 @@ const AdminDashboard = () => {
             />
           </label>
           <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            End Time
+            End Time *
             <input
               required
               type="datetime-local"
@@ -288,7 +289,7 @@ const AdminDashboard = () => {
             />
           </label>
           <label className="md:col-span-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Location
+            Location *
             <select
               required
               name="location"
@@ -297,9 +298,9 @@ const AdminDashboard = () => {
               className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
             >
               <option value="" disabled>
-                Select location
+                Select location *
               </option>
-              {locations.map((location) => (
+              {locations.map(location => (
                 <option key={location.id} value={location.id}>
                   {location.location_display || location.location}
                 </option>
@@ -322,15 +323,15 @@ const AdminDashboard = () => {
               type="submit"
               className={`rounded-md px-4 py-2 text-sm font-semibold text-white transition ${
                 processing
-                  ? "bg-indigo-300"
-                  : "bg-indigo-600 hover:bg-indigo-500"
+                  ? 'bg-indigo-300'
+                  : 'bg-indigo-600 hover:bg-indigo-500'
               }`}
             >
               {processing
-                ? "Saving…"
+                ? 'Saving…'
                 : form.id
-                ? "Update Event"
-                : "Create Event"}
+                ? 'Update Event'
+                : 'Create Event'}
             </button>
           </div>
         </form>
@@ -348,7 +349,7 @@ const AdminDashboard = () => {
           </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2">
-            {myEvents.map((event) => {
+            {myEvents.map(event => {
               const registrations = registrationsByEvent[event.id] || [];
               return (
                 <EventCard
@@ -377,8 +378,8 @@ const AdminDashboard = () => {
                         className="rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-indigo-500"
                       >
                         {expandedEvent === event.id
-                          ? "Hide Registrations"
-                          : "View Registrations"}
+                          ? 'Hide Registrations'
+                          : 'View Registrations'}
                       </button>
                     </div>
                   }
@@ -390,7 +391,7 @@ const AdminDashboard = () => {
                           No registrations yet.
                         </div>
                       ) : (
-                        registrations.map((item) => (
+                        registrations.map(item => (
                           <div
                             key={item.id}
                             className="flex items-center justify-between"
@@ -425,11 +426,11 @@ const AdminDashboard = () => {
           </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {events.map((event) => (
+            {events.map(event => (
               <EventCard
                 key={event.id}
                 event={event}
-                badge={event.is_past ? "Past" : undefined}
+                badge={event.is_past ? 'Past' : undefined}
                 children={
                   <div className="flex items-center justify-between text-xs text-slate-500">
                     <span>Created by</span>

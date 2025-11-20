@@ -17,11 +17,10 @@ const SignupModal = ({ isOpen, onClose }) => {
   const [message, setMessage] = useState(null);
   const [signupProcessing, setSignupProcessing] = useState(false);
 
-  
   useEffect(() => {
     if (!isOpen) return;
-    
-    const handleEscape = (event) => {
+
+    const handleEscape = event => {
       if (event.key === 'Escape') {
         onClose();
       }
@@ -31,12 +30,12 @@ const SignupModal = ({ isOpen, onClose }) => {
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose]);
 
-  const handleChange = (event) => {
+  const handleChange = event => {
     const { name, value } = event.target;
-    setSignupData((prev) => ({ ...prev, [name]: value }));
+    setSignupData(prev => ({ ...prev, [name]: value }));
   };
 
-  const submitSignup = async (event) => {
+  const submitSignup = async event => {
     event.preventDefault();
     setError(null);
     setMessage(null);
@@ -44,16 +43,27 @@ const SignupModal = ({ isOpen, onClose }) => {
     try {
       await signupStudent(signupData);
       setMessage('Signup successful! Redirecting to login...');
-      setSignupData({ username: '', email: '', password: '', password_confirm: '', first_name: '', last_name: '' });
-     
+      setSignupData({
+        username: '',
+        email: '',
+        password: '',
+        password_confirm: '',
+        first_name: '',
+        last_name: '',
+      });
+
       setTimeout(() => {
         onClose();
-        
-        window.dispatchEvent(new CustomEvent('showLogin', { detail: { isAdmin: false } }));
+
+        window.dispatchEvent(
+          new CustomEvent('showLogin', { detail: { isAdmin: false } })
+        );
       }, 1500);
     } catch (err) {
       if (!err.response) {
-        setError('Cannot connect to server. Please make sure Django server is running.');
+        setError(
+          'Cannot connect to server. Please make sure Django server is running.'
+        );
         return;
       }
       const detail = err.response?.data;
@@ -71,34 +81,56 @@ const SignupModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const modalContent = (
-    <div 
+    <div
       className="fixed top-0 left-0 right-0 bottom-0 w-full h-full flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-      style={{ 
-        position: 'fixed', 
-        top: 0, 
-        left: 0, 
-        width: '100vw', 
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
         height: '100vh',
-        zIndex: 9999
+        zIndex: 9999,
       }}
-      
     >
-      <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg bg-white p-6 shadow-xl"
+        onClick={e => e.stopPropagation()}
+      >
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-slate-800">Student Signup</h2>
+          <h2 className="text-xl font-semibold text-slate-800">
+            Student Signup
+          </h2>
           <button
             type="button"
             onClick={onClose}
             className="text-slate-400 hover:text-slate-600"
           >
-            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
 
-        {message && <Alert type="success" message={message} onClose={() => setMessage(null)} />}
-        {error && <Alert type="error" message={error} onClose={() => setError(null)} />}
+        {message && (
+          <Alert
+            type="success"
+            message={message}
+            onClose={() => setMessage(null)}
+          />
+        )}
+        {error && (
+          <Alert type="error" message={error} onClose={() => setError(null)} />
+        )}
 
         <form onSubmit={submitSignup} className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
@@ -126,7 +158,7 @@ const SignupModal = ({ isOpen, onClose }) => {
               />
             </label>
             <label className="block text-sm font-semibold text-slate-700">
-              First Name
+              First Name *
               <input
                 name="first_name"
                 value={signupData.first_name}
@@ -136,7 +168,7 @@ const SignupModal = ({ isOpen, onClose }) => {
               />
             </label>
             <label className="block text-sm font-semibold text-slate-700">
-              Last Name
+              Last Name *
               <input
                 name="last_name"
                 value={signupData.last_name}
