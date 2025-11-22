@@ -206,13 +206,6 @@ const AdminDashboard = () => {
             Create, update, and monitor all events in real time.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={fetchData}
-          className="rounded-md bg-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-300"
-        >
-          Refresh
-        </button>
       </div>
 
       {message && (

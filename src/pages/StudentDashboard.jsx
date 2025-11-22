@@ -68,7 +68,7 @@ const StudentDashboard = () => {
     if (message) {
       const timer = setTimeout(() => {
         setMessage(null);
-      }, 3000);
+      }, 1000);
       return () => clearTimeout(timer);
     }
   }, [message]);
@@ -106,11 +106,11 @@ const StudentDashboard = () => {
     if (registration) {
       return (
         <div className="flex items-center justify-between gap-3 text-sm">
-          <span className="font-medium text-emerald-600">Registered</span>
+          {/* <span className="font-medium text-emerald-600">Registered</span> */}
           <button
             type="button"
             onClick={() => unregisterFromEvent(registration.id)}
-            className="rounded-md bg-rose-100 px-3 py-1.5 font-semibold text-rose-700 hover:bg-rose-200"
+            className="w-full rounded-md bg-rose-100 px-3 py-1.5 font-semibold text-rose-700 hover:bg-rose-200"
           >
             Unregister
           </button>
@@ -145,13 +145,6 @@ const StudentDashboard = () => {
             Register, manage, and review all events in one place.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={fetchData}
-          className="rounded-md bg-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-300"
-        >
-          Refresh
-        </button>
       </div>
 
       {message && (
@@ -183,14 +176,6 @@ const StudentDashboard = () => {
                 key={event.id}
                 event={event}
                 badge={badge}
-                children={
-                  registration ? (
-                    <div className="text-sm font-medium text-emerald-600">
-                      Status: Registered on{' '}
-                      {new Date(registration.created_at).toLocaleString()}
-                    </div>
-                  ) : null
-                }
                 actions={renderActions(event)}
               />
             );

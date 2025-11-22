@@ -172,13 +172,6 @@ const HomePage = () => {
           <h2 className="text-2xl font-semibold text-slate-800">
             Upcoming Events
           </h2>
-          <button
-            onClick={fetchEvents}
-            className="rounded-md bg-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-300"
-            type="button"
-          >
-            Refresh
-          </button>
         </div>
         {loadingEvents ? (
           <LoadingState />
