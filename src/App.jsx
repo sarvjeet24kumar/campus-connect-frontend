@@ -7,7 +7,6 @@ import HomePage from "./pages/HomePage.jsx";
 import StudentDashboard from "./pages/StudentDashboard.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import { AdminRoute, PublicRoute, StudentRoute } from "./routes/ProtectedRoute.jsx";
-
 const App = () => {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col">

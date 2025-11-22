@@ -1,15 +1,15 @@
-import { Navigate } from "react-router-dom";
-import Loader from "../components/Loader";
-import { useAuth } from "../context/AuthContext";
+import { Navigate } from 'react-router-dom';
+import Loader from '../components/Loader';
+import { useAuth } from '../context/AuthContext';
 
 const getDefaultPath = (roles = []) => {
-  if (roles.includes("admin") || roles.includes("super_admin")) {
-    return "/admin";
+  if (roles.includes('admin') || roles.includes('super_admin')) {
+    return '/admin';
   }
-  if (roles.includes("student")) {
-    return "/student";
+  if (roles.includes('student')) {
+    return '/student';
   }
-  return "/";
+  return '/';
 };
 
 const LoadingScreen = () => (
@@ -33,12 +33,12 @@ const RequireAuth = ({ children, allowedRoles = [], forbiddenRoles = [] }) => {
     return children;
   }
 
-  const hasRole = roles.some((role) => allowedRoles.includes(role));
+  const hasRole = roles.some(role => allowedRoles.includes(role));
   if (!hasRole) {
     return <Navigate to={getDefaultPath(roles)} replace />;
   }
 
-  const hasForbiddenRole = roles.some((role) => forbiddenRoles.includes(role));
+  const hasForbiddenRole = roles.some(role => forbiddenRoles.includes(role));
   if (hasForbiddenRole) {
     return <Navigate to={getDefaultPath(roles)} replace />;
   }
@@ -47,11 +47,14 @@ const RequireAuth = ({ children, allowedRoles = [], forbiddenRoles = [] }) => {
 };
 
 export const AdminRoute = ({ children }) => (
-  <RequireAuth allowedRoles={["admin", "super_admin"]}>{children}</RequireAuth>
+  <RequireAuth allowedRoles={['admin', 'super_admin']}>{children}</RequireAuth>
 );
 
 export const StudentRoute = ({ children }) => (
-  <RequireAuth allowedRoles={["student"]} forbiddenRoles={["admin", "super_admin"]}>
+  <RequireAuth
+    allowedRoles={['student']}
+    forbiddenRoles={['admin', 'super_admin']}
+  >
     {children}
   </RequireAuth>
 );
@@ -62,7 +65,7 @@ export const PublicRoute = ({ children, restricted = false }) => {
   if (loading) {
     return <LoadingScreen />;
   }
-
+  console.log(restricted, isAuthenticated, roles);
   if (restricted && isAuthenticated) {
     return <Navigate to={getDefaultPath(roles)} replace />;
   }

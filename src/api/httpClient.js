@@ -7,7 +7,7 @@ import {
   clearTokens,
 } from './tokenManager.js';
 
-const API_BASE_URL = 'http://localhost:8000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const createHttpClient = () => {
   const instance = axios.create({
@@ -18,21 +18,21 @@ export const createHttpClient = () => {
   });
 
   instance.interceptors.request.use(
-    (config) => {
+    config => {
       const token = getAccessToken();
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
       return config;
     },
-    (error) => Promise.reject(error)
+    error => Promise.reject(error)
   );
 
   let isRefreshing = false;
   let failedQueue = [];
 
   const processQueue = (error, token = null) => {
-    failedQueue.forEach((prom) => {
+    failedQueue.forEach(prom => {
       if (error) {
         prom.reject(error);
       } else {
@@ -43,8 +43,8 @@ export const createHttpClient = () => {
   };
 
   instance.interceptors.response.use(
-    (response) => response,
-    async (error) => {
+    response => response,
+    async error => {
       const originalRequest = error.config;
 
       if (error.response?.status === 401 && !originalRequest._retry) {
@@ -52,11 +52,11 @@ export const createHttpClient = () => {
           return new Promise((resolve, reject) => {
             failedQueue.push({ resolve, reject });
           })
-            .then((token) => {
+            .then(token => {
               originalRequest.headers.Authorization = `Bearer ${token}`;
               return instance(originalRequest);
             })
-            .catch((err) => {
+            .catch(err => {
               return Promise.reject(err);
             });
         }
@@ -97,4 +97,3 @@ export const createHttpClient = () => {
 
   return instance;
 };
-

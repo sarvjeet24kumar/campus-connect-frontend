@@ -6,7 +6,7 @@ import Alert from './Alert.jsx';
 import LoginOverlay from './LoginOverlay.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 
-const LoginModal = ({ isOpen, onClose, isAdmin = false }) => {
+const LoginModal = ({ isOpen, onClose }) => {
   const { login, user, roles, loading, processing } = useAuth();
   const navigate = useNavigate();
   const [loginData, setLoginData] = useState({ username: '', password: '' });
@@ -14,16 +14,12 @@ const LoginModal = ({ isOpen, onClose, isAdmin = false }) => {
   const [showLoginOverlay, setShowLoginOverlay] = useState(false);
   const [pendingNavigation, setPendingNavigation] = useState(null);
 
-
   useEffect(() => {
     if (isOpen) {
-      
       setShowLoginOverlay(false);
       setError(null);
       setPendingNavigation(null);
-     
     } else {
-      
       setShowLoginOverlay(false);
       setError(null);
       setLoginData({ username: '', password: '' });
@@ -31,11 +27,10 @@ const LoginModal = ({ isOpen, onClose, isAdmin = false }) => {
     }
   }, [isOpen]);
 
-  
   useEffect(() => {
     if (!isOpen) return;
-    
-    const handleEscape = (event) => {
+
+    const handleEscape = event => {
       if (event.key === 'Escape' && !showLoginOverlay) {
         onClose();
       }
@@ -45,14 +40,12 @@ const LoginModal = ({ isOpen, onClose, isAdmin = false }) => {
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose, showLoginOverlay]);
 
- 
   useEffect(() => {
     if (pendingNavigation && !loading && roles && roles.length > 0) {
       const userRoles = roles;
-    
+
       setPendingNavigation(null);
-      
-     
+
       if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
         navigate('/admin', { replace: true });
       } else if (userRoles.includes('student')) {
@@ -63,32 +56,35 @@ const LoginModal = ({ isOpen, onClose, isAdmin = false }) => {
     }
   }, [roles, loading, pendingNavigation, navigate]);
 
-  const handleChange = (event) => {
+  const handleChange = event => {
     const { name, value } = event.target;
-    setLoginData((prev) => ({ ...prev, [name]: value }));
+    setLoginData(prev => ({ ...prev, [name]: value }));
   };
 
-  const submitLogin = async (event) => {
+  const submitLogin = async event => {
     event.preventDefault();
     setError(null);
     setShowLoginOverlay(true);
     try {
-      await login({ ...loginData, isAdmin });
-     
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await login({ ...loginData });
+
+      await new Promise(resolve => setTimeout(resolve, 1000));
       setShowLoginOverlay(false);
       onClose();
-      
-     
+
       setPendingNavigation(true);
     } catch (err) {
       setShowLoginOverlay(false);
       if (err.message && err.message.includes('connect')) {
-        setError('Cannot connect to server. Please make sure Django server is running on port 8000.');
+        setError(
+          'Cannot connect to server.'
+        );
         return;
       }
-      
+
       const detail = err.response?.data;
+      console.log('Login error detail:', detail);
+
       if (detail?.error) {
         setError(detail.error);
       } else if (detail && typeof detail === 'object') {
@@ -102,45 +98,54 @@ const LoginModal = ({ isOpen, onClose, isAdmin = false }) => {
     }
   };
 
-  
   if (!isOpen) return null;
 
-  
   if (showLoginOverlay) {
     return <LoginOverlay />;
   }
 
- 
   const modalContent = (
-    <div 
+    <div
       className="fixed top-0 left-0 right-0 bottom-0 w-full h-full flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-      style={{ 
-        position: 'fixed', 
-        top: 0, 
-        left: 0, 
-        width: '100vw', 
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
         height: '100vh',
-        zIndex: 9999
+        zIndex: 9999,
       }}
-     
     >
-      <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
+        onClick={e => e.stopPropagation()}
+      >
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-slate-800">
-            {isAdmin ? 'Admin Login' : 'Student Login'}
-          </h2>
+          <h2 className="text-xl font-semibold text-slate-800">User Login</h2>
           <button
             type="button"
             onClick={onClose}
             className="text-slate-400 hover:text-slate-600"
           >
-            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
 
-        {error && <Alert type="error" message={error} onClose={() => setError(null)} />}
+        {error && (
+          <Alert type="error" message={error} onClose={() => setError(null)} />
+        )}
 
         <form onSubmit={submitLogin} className="space-y-4">
           <label className="block text-sm font-semibold text-slate-700">
@@ -195,4 +200,3 @@ const LoginModal = ({ isOpen, onClose, isAdmin = false }) => {
 };
 
 export default LoginModal;
-
