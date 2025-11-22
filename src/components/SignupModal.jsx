@@ -62,7 +62,7 @@ const SignupModal = ({ isOpen, onClose }) => {
     } catch (err) {
       if (!err.response) {
         setError(
-          'Cannot connect to server. Please make sure Django server is running.'
+          'Cannot connect to server.'
         );
         return;
       }

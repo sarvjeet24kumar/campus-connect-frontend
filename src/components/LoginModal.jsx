@@ -77,7 +77,7 @@ const LoginModal = ({ isOpen, onClose }) => {
       setShowLoginOverlay(false);
       if (err.message && err.message.includes('connect')) {
         setError(
-          'Cannot connect to server. Please make sure Django server is running on port 8000.'
+          'Cannot connect to server.'
         );
         return;
       }

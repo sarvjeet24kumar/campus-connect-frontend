@@ -11,7 +11,7 @@ import EventCard from '../components/EventCard.jsx';
 
 const getErrorMessage = (err, defaultMsg) => {
   if (!err.response) {
-    return 'Cannot connect to server. Please make sure Django server is running.';
+    return 'Cannot connect to server.';
   }
   const detail = err.response?.data;
   if (Array.isArray(detail)) return detail[0];
