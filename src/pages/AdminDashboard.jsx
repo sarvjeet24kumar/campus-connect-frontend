@@ -34,7 +34,6 @@ const utcToLocalDateTime = utcIsoString => {
 
 const AdminDashboard = () => {
   const { user, isSuperAdmin } = useAuth();
-  console.log('Is Super Admin:', isSuperAdmin, user);
 
   const [events, setEvents] = useState([]);
   const [locations, setLocations] = useState([]);
@@ -107,9 +106,7 @@ const AdminDashboard = () => {
       await fetchData();
     } catch (err) {
       if (!err.response) {
-        setError(
-          'Cannot connect to server.'
-        );
+        setError('Cannot connect to server.');
         setProcessing(false);
         return;
       }
@@ -184,9 +181,7 @@ const AdminDashboard = () => {
       setExpandedEvent(eventId);
     } catch (err) {
       if (!err.response) {
-        setError(
-          'Cannot connect to server. '
-        );
+        setError('Cannot connect to server. ');
         return;
       }
 
