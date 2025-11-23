@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 
 import { signupStudent } from '../api/students.api.js';
 import Alert from './Alert.jsx';
+import { Eye, EyeOff } from 'lucide-react';
 
 const SignupModal = ({ isOpen, onClose }) => {
   const [signupData, setSignupData] = useState({
@@ -13,6 +14,8 @@ const SignupModal = ({ isOpen, onClose }) => {
     first_name: '',
     last_name: '',
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
   const [signupProcessing, setSignupProcessing] = useState(false);
@@ -61,9 +64,7 @@ const SignupModal = ({ isOpen, onClose }) => {
       }, 1500);
     } catch (err) {
       if (!err.response) {
-        setError(
-          'Cannot connect to server.'
-        );
+        setError('Cannot connect to server.');
         return;
       }
       const detail = err.response?.data;
@@ -179,29 +180,49 @@ const SignupModal = ({ isOpen, onClose }) => {
             </label>
             <label className="block text-sm font-semibold text-slate-700">
               Password *
-              <input
-                required
-                type="password"
-                name="password"
-                minLength={8}
-                value={signupData.password}
-                onChange={handleChange}
-                className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
-                placeholder="Minimum 8 characters"
-              />
+              <div className="flex justify-between mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none">
+                <input
+                  required
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  className="w-full focus:outline-none focus:ring-0 focus:border-transparent"
+                  minLength={8}
+                  value={signupData.password}
+                  onChange={handleChange}
+                  placeholder="Minimum 8 characters"
+                />
+
+                {showPassword ? (
+                  <EyeOff onClick={() => setShowPassword(!showPassword)} />
+                ) : (
+                  <Eye onClick={() => setShowPassword(!showPassword)} />
+                )}
+              </div>
             </label>
+
             <label className="block text-sm font-semibold text-slate-700">
               Confirm Password *
-              <input
-                required
-                type="password"
-                name="password_confirm"
-                minLength={8}
-                value={signupData.password_confirm}
-                onChange={handleChange}
-                className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
-                placeholder="Re-enter password"
-              />
+              <div className="flex justify-between mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none">
+                <input
+                  required
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  name="password_confirm"
+                  className="w-full focus:outline-none focus:ring-0 focus:border-transparent"
+                  minLength={8}
+                  value={signupData.password_confirm}
+                  onChange={handleChange}
+                  placeholder="Re-enter password"
+                />
+                {showConfirmPassword ? (
+                  <EyeOff
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  />
+                ) : (
+                  <Eye
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  />
+                )}
+              </div>
             </label>
           </div>
           <div className="flex gap-3">

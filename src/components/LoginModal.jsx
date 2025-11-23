@@ -76,9 +76,7 @@ const LoginModal = ({ isOpen, onClose }) => {
     } catch (err) {
       setShowLoginOverlay(false);
       if (err.message && err.message.includes('connect')) {
-        setError(
-          'Cannot connect to server.'
-        );
+        setError('Cannot connect to server.');
         return;
       }
 
